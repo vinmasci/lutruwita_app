@@ -1,0 +1,27 @@
+{
+  "name": "@lutruwita/map-core",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint src/",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tmcw/togeojson": "^5.8.1",
+    "@turf/turf": "^6.5.0",
+    "simplify-js": "^1.2.4",
+    "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.2",
+    "@types/xml2js": "^0.4.12",
+    "tsup": "^7.2.0",
+    "typescript": "^5.2.2"
+  }
+}

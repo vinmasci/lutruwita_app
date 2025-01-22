@@ -1,0 +1,41 @@
+
+
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "sourceMap": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "allowJs": false,
+    "declaration": true,
+    "declarationMap": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "composite": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "types": ["react"]
+  },
+  "include": [
+    "src/index.ts",
+    "src/navigation/**/*.ts",
+    "src/navigation/**/*.tsx",
+    "src/modal/**/*.ts",
+    "src/modal/**/*.tsx",
+    "src/form/**/*.ts",
+    "src/form/**/*.tsx",
+    "src/upload/**/*.ts",
+    "src/upload/**/*.tsx"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

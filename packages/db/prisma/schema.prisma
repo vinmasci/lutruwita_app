@@ -1,0 +1,49 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+  engineType      = "binary"
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [postgis]
+  // Add direct URL for better performance with PgBouncer
+  directUrl  = env("DIRECT_DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  auth0Id       String    @unique
+  email         String    @unique
+  name          String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  pois          POI[]
+  routes        Route[]
+}
+
+model POI {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  location    Unsupported("geometry(Point, 4326)")
+  category    String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+}
+
+model Route {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  path        Unsupported("geometry(LineString, 4326)")
+  distance    Float
+  elevation   Float
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+}
