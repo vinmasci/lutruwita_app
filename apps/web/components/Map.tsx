@@ -21,40 +21,16 @@ interface MapProps {
 }
 
 export default function Map({ className }: MapProps) {
-  const {
-    map,
-    setMap,
-    viewport,
-    setViewport,
-    mapStyle,
-    setMapStyle,
-    isLoaded,
-    setIsLoaded
-  } = useMap();
+  const { viewport, setViewport, mapStyle, setMapStyle } = useMap();
   const mapContainer = useRef<HTMLDivElement>(null);
-  const [mapInstance, setMapInstance] = useState<mapboxgl.Map | null>(null);
+  const mapInstance = useRef<mapboxgl.Map | null>(null);
   
-  // Event handler refs to maintain stable references
-  const handleErrorRef = useRef((e: mapboxgl.ErrorEvent) => {
+  // Event handlers
+  const handleError = (e: mapboxgl.ErrorEvent) => {
     console.error('Map error:', e);
-  });
+  };
 
-  const handleStyleDataRef = useRef((e: mapboxgl.MapboxEvent<any, any>) => {
-    const map = e.target as mapboxgl.Map;
-    if (!map.getStyle()) {
-      console.error('Failed to load map style');
-    }
-  });
-
-  const handleLoadRef = useRef((map: mapboxgl.Map) => {
-    if (!map) return;
-    setIsLoaded(true);
-    setMap(map);
-    setMapInstance(map);
-    console.log('Map loaded successfully');
-  });
-
-  const handleMoveEndRef = useRef((e: mapboxgl.MapboxEvent<any, any>) => {
+  const handleMoveEnd = (e: mapboxgl.MapboxEvent) => {
     const map = e.target as mapboxgl.Map;
     if (!map) return;
     const center = map.getCenter().toArray() as [number, number];
@@ -62,122 +38,74 @@ export default function Map({ className }: MapProps) {
     const bearing = map.getBearing();
     const pitch = map.getPitch();
     setViewport({ center, zoom, bearing, pitch });
-  });
+  };
 
-  // Initialize map on client side only
+  // Initialize map
   useEffect(() => {
-    if (typeof window === 'undefined' || !mapContainer.current || mapInstance || map) return;
-
-    let mounted = true;
-    let newMap: mapboxgl.Map | null = null;
+    if (typeof window === 'undefined' || !mapContainer.current || mapInstance.current) return;
 
     try {
-      // Force cleanup of any existing WebGL contexts
-      const canvas = mapContainer.current.querySelector('.mapboxgl-canvas') as HTMLCanvasElement;
-      if (canvas) {
-        const gl = canvas.getContext('webgl', { failIfMajorPerformanceCaveat: true }) || 
-                  canvas.getContext('experimental-webgl', { failIfMajorPerformanceCaveat: true });
-        if (gl && 'getExtension' in gl) {
-          const ext = gl.getExtension('WEBGL_lose_context');
-          if (ext) {
-            ext.loseContext();
-          }
-        }
-      }
-
-      newMap = new mapboxgl.Map({
+      mapInstance.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: MAP_STYLES[mapStyle],
         center: viewport.center,
         zoom: viewport.zoom,
         attributionControl: true,
-        preserveDrawingBuffer: true, // Helps with rendering consistency
+        preserveDrawingBuffer: true,
         maxZoom: 18
       });
 
-      if (mounted) {
-        // Create navigation control
-        const navControl = new mapboxgl.NavigationControl();
-        
-        // Attach event handlers
-        newMap.on('error', handleErrorRef.current);
-        newMap.on('styledata', handleStyleDataRef.current);
-        newMap.once('load', () => handleLoadRef.current(newMap));
-        newMap.on('moveend', handleMoveEndRef.current);
-
-        // Add navigation controls
-        newMap.addControl(navControl, 'top-right');
-      }
+      const map = mapInstance.current;
+      const navControl = new mapboxgl.NavigationControl();
+      
+      // Attach event handlers
+      map.on('error', handleError);
+      map.on('moveend', handleMoveEnd);
+      map.addControl(navControl, 'top-right');
 
       return () => {
-        mounted = false;
-        if (newMap) {
-          try {
-            // Remove event listeners
-            newMap.off('error', handleErrorRef.current);
-            newMap.off('styledata', handleStyleDataRef.current);
-            newMap.off('load');
-            newMap.off('moveend', handleMoveEndRef.current);
-            
-            // Clear references before removing the map
-            setMap(null);
-            setMapInstance(null);
-            setIsLoaded(false);
-            
-            // Remove the map instance
-            newMap.remove();
-          } catch (error) {
-            console.error('Error cleaning up map:', error);
-          }
-          newMap = null;
+        if (mapInstance.current) {
+          mapInstance.current.off('error', handleError);
+          mapInstance.current.off('moveend', handleMoveEnd);
+          mapInstance.current.remove();
+          mapInstance.current = null;
         }
       };
     } catch (error) {
       console.error('Error initializing map:', error);
     }
-  }, [setMap, setIsLoaded, setViewport, viewport.center, viewport.zoom, mapStyle, map, mapInstance]);
+  }, []);
 
-  // Update map when viewport or style changes from context
+  // Update map when viewport changes
   useEffect(() => {
-    if (!mapInstance || !isLoaded) return;
+    const map = mapInstance.current;
+    if (!map) return;
 
     try {
-      const currentCenter = mapInstance.getCenter().toArray();
-      const currentZoom = mapInstance.getZoom();
-      const currentStyle = mapInstance.getStyle();
-      
-      // Only update if values have changed significantly
-      const centerChanged = Math.abs(currentCenter[0] - viewport.center[0]) > 0.00001 
-        || Math.abs(currentCenter[1] - viewport.center[1]) > 0.00001;
-      const zoomChanged = Math.abs(currentZoom - viewport.zoom) > 0.01;
-      const styleChanged = currentStyle && MAP_STYLES[mapStyle] !== currentStyle.name;
-
-      if (centerChanged) {
-        mapInstance.setCenter(viewport.center);
-      }
-      if (zoomChanged) {
-        mapInstance.setZoom(viewport.zoom);
-      }
-      if (styleChanged) {
-        mapInstance.setStyle(MAP_STYLES[mapStyle]);
-      }
-      
-      mapInstance.setBearing(viewport.bearing);
-      mapInstance.setPitch(viewport.pitch);
+      map.setCenter(viewport.center);
+      map.setZoom(viewport.zoom);
+      map.setBearing(viewport.bearing);
+      map.setPitch(viewport.pitch);
     } catch (error) {
       console.error('Error updating map:', error);
     }
-  }, [mapInstance, viewport, mapStyle, isLoaded]);
+  }, [viewport]);
+
+  // Update map style
+  useEffect(() => {
+    const map = mapInstance.current;
+    if (!map) return;
+
+    try {
+      map.setStyle(MAP_STYLES[mapStyle]);
+    } catch (error) {
+      console.error('Error updating map style:', error);
+    }
+  }, [mapStyle]);
 
   const handleStyleChange = (_: React.MouseEvent<HTMLElement>, newStyle: MapStyle | null) => {
-    if (newStyle !== null && mapInstance) {
-      try {
-        console.log(`Changing map style to: ${newStyle}`);
-        setMapStyle(newStyle);
-        mapInstance.setStyle(MAP_STYLES[newStyle]);
-      } catch (error) {
-        console.error('Error changing map style:', error);
-      }
+    if (newStyle !== null) {
+      setMapStyle(newStyle);
     }
   };
 
