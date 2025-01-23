@@ -11,7 +11,6 @@
     "rootDir": "./src",
     "sourceMap": true,
     "module": "ESNext",
-    "incremental": true,
     "moduleResolution": "node",
     "jsx": "react-jsx",
     "allowJs": false,
@@ -26,10 +25,11 @@
     "isolatedModules": true,
     "types": ["react"]
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.json"
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "tsup.config.ts"
   ],
   "references": [
     { "path": "../map-core" }

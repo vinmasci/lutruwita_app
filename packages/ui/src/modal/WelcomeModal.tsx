@@ -8,7 +8,7 @@ export interface WelcomeModalProps {
 
 const WELCOME_SHOWN_KEY = 'welcome_modal_shown';
 
-const WelcomeModal = ({ onClose }: WelcomeModalProps) => {
+export function WelcomeModal({ onClose }: WelcomeModalProps) {
   const [open, setOpen] = useState(true);
 
   useEffect(() => {
@@ -83,6 +83,4 @@ const WelcomeModal = ({ onClose }: WelcomeModalProps) => {
       </Box>
     </Modal>
   );
-};
-
-export default WelcomeModal;
+}
