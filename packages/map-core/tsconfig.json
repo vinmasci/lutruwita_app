@@ -10,7 +10,7 @@
     "rootDir": "./src",
     "sourceMap": true,
     "module": "ESNext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "allowJs": false,
     "declaration": true,
     "declarationMap": true,
@@ -22,12 +22,6 @@
     "resolveJsonModule": true,
     "isolatedModules": true
   },
-  "include": [
-    "src/index.ts",
-    "src/gpx/index.ts",
-    "src/gpx/processor.ts",
-    "src/gpx/types.ts",
-    "src/types/*.d.ts"
-  ],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

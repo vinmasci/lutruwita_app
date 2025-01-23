@@ -35,6 +35,9 @@ importers:
       '@lutruwita/api':
         specifier: workspace:^
         version: link:../../packages/api
+      '@lutruwita/ui':
+        specifier: workspace:^
+        version: link:../../packages/ui
       '@mui/icons-material':
         specifier: ^6.4.1
         version: 6.4.1(@mui/material@6.4.1(@emotion/react@11.14.0(@types/react@19.0.7)(react@19.0.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.7)(react@19.0.0))(@types/react@19.0.7)(react@19.0.0))(@types/react@19.0.7)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@types/react@19.0.7)(react@19.0.0)

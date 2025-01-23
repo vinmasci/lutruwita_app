@@ -1,6 +1,5 @@
-
-
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "target": "es2017",
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -12,7 +11,8 @@
     "rootDir": "./src",
     "sourceMap": true,
     "module": "ESNext",
-    "moduleResolution": "bundler",
+    "incremental": true,
+    "moduleResolution": "node",
     "jsx": "react-jsx",
     "allowJs": false,
     "declaration": true,
@@ -27,15 +27,11 @@
     "types": ["react"]
   },
   "include": [
-    "src/index.ts",
-    "src/navigation/**/*.ts",
-    "src/navigation/**/*.tsx",
-    "src/modal/**/*.ts",
-    "src/modal/**/*.tsx",
-    "src/form/**/*.ts",
-    "src/form/**/*.tsx",
-    "src/upload/**/*.ts",
-    "src/upload/**/*.tsx"
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.json"
   ],
-  "exclude": ["node_modules", "dist"]
+  "references": [
+    { "path": "../map-core" }
+  ]
 }

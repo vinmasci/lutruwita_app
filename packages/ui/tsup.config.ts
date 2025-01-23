@@ -5,7 +5,10 @@ export default defineConfig({
     'src/index.ts',
     'src/navigation/Sidebar.tsx',
     'src/navigation/SidebarContext.tsx',
-    'src/navigation/SidebarItem.tsx'
+    'src/navigation/SidebarItem.tsx',
+    'src/modal/Modal.tsx',
+    'src/modal/ModalContext.tsx',
+    'src/modal/WelcomeModal.tsx'
   ],
   format: ['cjs', 'esm'],
   dts: {

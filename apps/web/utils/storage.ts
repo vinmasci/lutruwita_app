@@ -14,9 +14,9 @@ export interface StoredMapState {
 
 export const DEFAULT_MAP_STATE: StoredMapState = {
   center: [146.8087, -41.4419], // Tasmania center coordinates
-  zoom: 7,
+  zoom: 8,
   bearing: 0,
-  pitch: 0,
+  pitch: 45, // Set initial pitch for 3D terrain view
   style: 'outdoors', // Set outdoors as default style to match initial client state
 };
 
